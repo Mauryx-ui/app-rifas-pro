@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Comprobante de Reserva</title>
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='logo.ico') }}"
+      type="image/x-icon"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        text-align: center;
+        padding: 40px 20px;
+      }
+      .ticket-card {
+        max-width: 420px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        border: 2px dashed #28a745;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      .num-big {
+        font-size: 32px;
+        font-weight: bold;
+        color: #dc3545;
+        background: #fff3cd;
+        padding: 10px;
+        border-radius: 6px;
+        display: inline-block;
+        margin: 10px 0;
+      }
+      .btn-wa {
+        display: block;
+        background: #25d366;
+        color: white;
+        padding: 12px;
+        text-decoration: none;
+        font-weight: bold;
+        border-radius: 6px;
+        margin-top: 15px;
+        font-size: 15px;
+      }
+      .btn-wa:hover {
+        background: #1eb853;
+      }
+      .btn-home {
+        display: inline-block;
+        margin-top: 15px;
+        color: #007bff;
+        text-decoration: none;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ticket-card">
+      <h2 style="color: #28a745; margin-top: 0">¡Número Reservado!</h2>
+      <p><strong>Cliente:</strong> {{ nombre }}</p>
+      <p><strong>Contacto:</strong> {{ contacto }}</p>
+      <p>Tu Número Asignado es:</p>
+      <div class="num-big">{{ numero }}</div>
+      <p><strong>Valor a Pagar:</strong> {{ valor }}</p>
+      <p><strong>Fecha:</strong> {{ fecha }}</p>
+      <hr />
+      {% if num_wa_clean %}
+      <a
+        href="https://wa.me/{{ num_wa_clean }}?text={{ mensaje_wa_encoded }}"
+        target="_blank"
+        class="btn-wa"
+        >📲 Enviar Comprobante por WhatsApp al Organizador</a
+      >
+      {% else %}
+      <a
+        href="https://api.whatsapp.com/send?text={{ mensaje_wa_encoded }}"
+        target="_blank"
+        class="btn-wa"
+        >📲 Compartir Comprobante por WhatsApp</a
+      >
+      {% endif %}
+      <br />
+      <a href="/" class="btn-home">← Volver al Inicio</a>
+    </div>
+  </body>
+</html>

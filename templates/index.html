@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>{{ config[1] if config else 'Plataforma de Rifas' }}</title>
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='logo.ico') }}"
+      type="image/x-icon"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        max-width: 800px;
+        background: white;
+        padding: 25px;
+        margin: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      .banner {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .banner img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 6px;
+        max-height: 280px;
+      }
+      .leyenda {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin: 15px 0;
+        font-size: 14px;
+      }
+      .dot {
+        height: 15px;
+        width: 15px;
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 8px;
+        max-height: 280px;
+        overflow-y: auto;
+        padding: 10px;
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        margin-bottom: 20px;
+      }
+      .num-box {
+        padding: 8px;
+        text-align: center;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 14px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+      }
+      .disponible {
+        background: #e2e3e5;
+        color: #383d41;
+      }
+      .disponible:hover {
+        background: #28a745;
+        color: white;
+      }
+      .pendiente {
+        background: #fff3cd;
+        color: #856404;
+        cursor: not-allowed;
+      }
+      .pagado {
+        background: #f8d7da;
+        color: #721c24;
+        cursor: not-allowed;
+      }
+      .form-box {
+        background: #fdfdfe;
+        padding: 20px;
+        border: 1px solid #cfe2ff;
+        border-radius: 6px;
+      }
+      input,
+      select {
+        padding: 10px;
+        width: 100%;
+        margin-bottom: 12px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        background: #28a745;
+        color: white;
+        padding: 12px;
+        width: 100%;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      button:hover {
+        background: #218838;
+      }
+    </style>
+    <script>
+      function seleccionarNumero(num, estado) {
+        if (estado !== "disponible") {
+          alert("Este número ya está apartado o pagado. Escoge otro.");
+          return;
+        }
+        document.getElementById("input_numero").value = num;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      {% if config %}
+      <h1>{{ config[1] }}</h1>
+      <div class="banner">
+        {% if config[16] %}
+        <img src="{{ config[16] }}" alt="Imagen del Premio" />
+        {% endif %}
+        <p>
+          <strong>Organizador:</strong> {{ config[2] }} |
+          <strong>Soporte vía {{ config[3] }}:</strong> {{ config[4] }}
+        </p>
+        <p>
+          <strong>Premio:</strong> {{ config[9] }} | <strong>Precio:</strong> {{
+          config[12] }} {{ config[10] }}
+        </p>
+        <p>
+          <strong>Sorteo por:</strong> {{ config[15] }} |
+          <strong>Fecha:</strong> {{ config[17] }}
+        </p>
+      </div>
+      <hr />
+      <h3>
+        🎯 Elige tu número haciendo clic abajo o escribiéndolo en el formulario
+      </h3>
+      <div class="leyenda">
+        <span
+          ><span class="dot" style="background: #e2e3e5"></span>
+          Disponible</span
+        >
+        <span
+          ><span class="dot" style="background: #fff3cd"></span> Pendiente</span
+        >
+        <span
+          ><span class="dot" style="background: #f8d7da"></span> Pagado</span
+        >
+      </div>
+      <div class="grid">
+        {% for n in numeros_lista %} {% set info = ocupados.get(n) %} {% if not
+        info %}
+        <div
+          class="num-box disponible"
+          onclick="seleccionarNumero('{{ n }}', 'disponible')"
+        >
+          {{ n }}
+        </div>
+        {% elif info.estado == 'Pendiente' %}
+        <div class="num-box pendiente" title="Apartado">{{ n }}</div>
+        {% else %}
+        <div class="num-box pagado" title="Vendido">{{ n }}</div>
+        {% endif %} {% endfor %}
+      </div>
+      <div class="form-box">
+        <h3>📝 Datos de Reserva</h3>
+        <form action="/apartar" method="post">
+          <input type="hidden" name="rifa_id" value="{{ config[0] }}" />
+          Nombre y Apellidos:
+          <input
+            type="text"
+            name="nombre"
+            required
+            placeholder="Tu nombre completo"
+          />
+          Móvil / WhatsApp:
+          <input
+            type="text"
+            name="contacto"
+            required
+            placeholder="Tu número de teléfono"
+          />
+          Residencia:
+          <input
+            type="text"
+            name="residencia"
+            required
+            placeholder="Ciudad / Municipio"
+          />
+          Número a Escoger:
+          <input
+            type="text"
+            id="input_numero"
+            name="numero"
+            required
+            placeholder="Ej: 05 o 005"
+            style="font-weight: bold; color: #007bff; font-size: 16px"
+          />
+          <input type="hidden" name="valor_pagado" value="{{ config[12] }}" />
+          <p style="font-size: 13px; color: #555">
+            <strong>Métodos de Pago:</strong> {{ config[13] }}<br /><strong
+              >Datos/Cuenta:</strong
+            >
+            {{ config[14] }}
+          </p>
+          <button type="submit">Generar Comprobante de Reserva</button>
+        </form>
+      </div>
+      {% else %}
+      <h2 style="text-align: center; color: #dc3545">
+        No hay rifas activas en este momento. Ingresa al panel de administración
+        para publicar una.
+      </h2>
+      <p style="text-align: center">
+        <a href="/login">Acceso Administrador</a>
+      </p>
+      {% endif %}
+    </div>
+  </body>
+</html>

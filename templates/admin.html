@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Panel Administrador</title>
+    <link rel="icon" href="{{ url_for('static', filename='logo.ico') }}" type="image/x-icon">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; }
+        .container { max-width: 950px; background: white; padding: 25px; margin: auto; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1, h3 { color: #333; }
+        .box { background: #e9ecef; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+        input, select { padding: 8px; width: 100%; margin-bottom: 10px; box-sizing: border-box; }
+        button { background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 14px; }
+        th { background: #007bff; color: white; }
+        .link-box { background: #d4edda; color: #155724; padding: 10px; border-radius: 4px; font-weight: bold; word-break: break-all; }
+        .btn-aprobar { background: #ffc107; color: #000; padding: 5px 8px; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold; }
+        .btn-eliminar { background: #dc3545; color: white; padding: 5px 8px; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold; margin-left: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Panel de Control de Rifas</h1>
+        <p><a href="/" style="text-decoration: none; background: #6c757d; color: white; padding: 6px 12px; border-radius: 4px;" target="_blank">Abrir Página del Cliente en Nueva Ventana</a></p>
+        <hr>
+        <div class="box">
+            <h3>🔗 Enlace Público Oficial</h3>
+            <p>Comparte este enlace por WhatsApp para que los clientes elijan sus números:</p>
+            <div class="link-box"><a href="http://127.0.0.1:5000/" target="_blank">http://127.0.0.1:5000/</a></div>
+        </div>
+        <div class="box">
+            <h3>📝 Crear Nueva Rifa</h3>
+            <form action="/crear_rifa" method="post">
+                Título: <input type="text" name="titulo" required placeholder="Ej: Rifa Gran Moto 2026">
+                Organizador: <input type="text" name="organizador" required>
+                Canal Soporte: 
+                <select name="canal_contacto">
+                    <option value="WhatsApp">WhatsApp</option>
+                    <option value="Mensaje de Texto">Mensaje de Texto</option>
+                    <option value="Instagram DM">Instagram DM</option>
+                    <option value="Messenger Facebook">Messenger Facebook</option>
+                </select>
+                Detalle del Contacto: <input type="text" name="contacto_detalles" required placeholder="Ej: +573001234567">
+                Lugar Residencia: <input type="text" name="lugar_residencia">
+                Lugar Sorteo: <input type="text" name="lugar_juego">
+                Modalidad: 
+                <select name="modalidad">
+                    <option value="2 cifras (00-99)">2 cifras (00 al 99)</option>
+                    <option value="3 cifras (000-999)">3 cifras (000 al 999)</option>
+                    <option value="4 cifras (0000-9999)">4 cifras (0000 al 9999)</option>
+                </select>
+                Premio: <input type="text" name="premio" required>
+                Moneda: 
+                <select name="moneda">
+                    <option value="COP">Peso Colombiano (COP)</option>
+                    <option value="MXN">Peso Mexicano (MXN)</option>
+                    <option value="USD">Dólar Estadounidense (USD)</option>
+                    <option value="CAD">Dólar Canadiense (CAD)</option>
+                    <option value="EUR">Euro (EUR)</option>
+                    <option value="GBP">Libra Esterlina (GBP)</option>
+                    <option value="CHF">Franco Suizo (CHF)</option>
+                </select>
+                Precio Base por Número: <input type="number" step="any" name="precio_base" required placeholder="Ej: 50">
+                Métodos de Pago: <input type="text" name="metodos_pago" placeholder="Ej: Daviplata, PayPal">
+                Detalles de Cuenta: <input type="text" name="detalles_pago">
+                Lotería Oficial: <input type="text" name="loteria">
+                URL Imagen Promocional: <input type="text" name="imagen_url">
+                Fecha del Sorteo: <input type="date" name="fecha_sorteo" required><br><br>
+                <button type="submit">Guardar y Publicar Rifa</button>
+            </form>
+        </div>
+
+        <h3>📊 Control de Ventas y Validación de Pagos</h3>
+        <table>
+            <tr>
+                <th>Cliente</th><th>Contacto</th><th>Residencia</th><th>Número</th><th>Valor</th><th>Estado</th><th>Acciones</th>
+            </tr>
+            {% for d in datos %}
+            <tr>
+                <td>{{ d[2] }}</td><td>{{ d[3] }}</td><td>{{ d[4] }}</td><td><strong>{{ d[5] }}</strong></td><td>{{ d[6] }}</td>
+                <td>
+                    {% if d[8] == 'Pendiente' %}
+                        <span style="color: #856404; font-weight: bold;">Pendiente</span>
+                    {% else %}
+                        <span style="color: #155724; font-weight: bold;">Pagado</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if d[8] == 'Pendiente' %}
+                        <a href="/aprobar/{{ d[0] }}" class="btn-aprobar">Aprobar</a>
+                    {% endif %}
+                    <a href="/eliminar/{{ d[0] }}" onclick="return confirm('¿Seguro deseas eliminar esta reserva?');" class="btn-eliminar">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>
