@@ -100,7 +100,7 @@ def login():
     if request.method == "POST":
         if request.form["password"] == "1234":
             session["admin"] = True
-            return redirect(url_for("admin"))
+            return redirect("/admin")
     return render_template("login.html")
 
 @app.route("/admin")
