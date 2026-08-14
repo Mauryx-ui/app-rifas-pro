@@ -142,10 +142,10 @@
           <strong>Organizador:</strong> {{ config[2] }} |
           <strong>Soporte vía {{ config[3] }}:</strong> {{ config[4] }}
         </p>
-        <p>
-          <strong>Premio:</strong> {{ config[9] }} | <strong>Precio:</strong> {{
-          config[12] }} {{ config[10] }}
-        </p>
+        <p><strong>Premio:</strong> {{ config[9] }} | <strong>Precio:</strong> {{ config[12] }} {{ config[10] }} 
+{% if config[11] and config[11] != 'Simple' %}
+    <span style="background: #e9ecef; padding: 2px 6px; border-radius: 4px; color: #333; font-size: 13px; margin-left: 5px;">🔄 Aprox: {{ config[11] }}</span>
+{% endif %}</p>
         <p>
           <strong>Sorteo por:</strong> {{ config[15] }} |
           <strong>Fecha:</strong> {{ config[17] }}
